@@ -174,17 +174,19 @@
                                 </option>
                                 <option value="shared_room"
                                     {{ (old('type') ?? $property->type) == 'shared_room' ? 'selected' : '' }}>Phòng
-                                    ghép</option>
+                                    ghép
+                                </option>
                                 <option value="apartment"
                                     {{ (old('type') ?? $property->type) == 'apartment' ? 'selected' : '' }}>Căn hộ
                                 </option>
                                 <option value="whole_house"
                                     {{ (old('type') ?? $property->type) == 'whole_house' ? 'selected' : '' }}>Nhà
-                                    nguyên căn</option>
+                                    nguyên căn
+                                </option>
                             </select>
                             @error('type')
                                 <p class="mt-1 text-sm text-red-600">
-                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    <i class="fas fa-exclamation-circleOPSIS mr-1"></i>
                                     {{ $message }}
                                 </p>
                             @enderror
@@ -263,13 +265,15 @@
                                 <option value="">Chọn trạng thái</option>
                                 <option value="available"
                                     {{ (old('status') ?? $property->status) == 'available' ? 'selected' : '' }}>Sẵn
-                                    sàng</option>
+                                    sàng
+                                </option>
                                 <option value="rented"
                                     {{ (old('status') ?? $property->status) == 'rented' ? 'selected' : '' }}>Đã thuê
                                 </option>
                                 <option value="maintenance"
                                     {{ (old('status') ?? $property->status) == 'maintenance' ? 'selected' : '' }}>Bảo
-                                    trì</option>
+                                    trì
+                                </option>
                             </select>
                             @error('status')
                                 <p class="mt-1 text-sm text-red-600">
@@ -289,6 +293,32 @@
                                 class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('description') border-red-500 @enderror"
                                 placeholder="Nhập mô tả về bất động sản...">{{ old('description') ?? $property->description }}</textarea>
                             @error('description')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <!-- Amenities -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-check-circle mr-1 text-blue-600"></i>
+                                Tiện nghi
+                            </label>
+                            <div class="grid grid-cols-2 gap-4">
+                                @foreach ($amenities as $amenity)
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="amenity_{{ $amenity->id }}" name="amenities[]"
+                                            value="{{ $amenity->id }}"
+                                            {{ in_array($amenity->id, old('amenities', $property->amenities->pluck('id')->toArray())) ? 'checked' : '' }}
+                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <label for="amenity_{{ $amenity->id }}"
+                                            class="ml-2 text-sm text-gray-700">{{ $amenity->name }}</label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            @error('amenities')
                                 <p class="mt-1 text-sm text-red-600">
                                     <i class="fas fa-exclamation-circle mr-1"></i>
                                     {{ $message }}
@@ -393,7 +423,8 @@
                 area: '{{ $property->area }}',
                 max_occupants: '{{ $property->max_occupants }}',
                 status: '{{ $property->status }}',
-                description: '{{ $property->description }}'
+                description: '{{ $property->description }}',
+                amenities: @json($property->amenities->pluck('id')->toArray())
             };
 
             // Form utilities
@@ -408,6 +439,11 @@
                     document.getElementById('max_occupants').value = originalValues.max_occupants;
                     document.getElementById('status').value = originalValues.status;
                     document.getElementById('description').value = originalValues.description || '';
+
+                    // Reset amenities checkboxes
+                    document.querySelectorAll('input[name="amenities[]"]').forEach(checkbox => {
+                        checkbox.checked = originalValues.amenities.includes(parseInt(checkbox.value));
+                    });
                 }
             }
 

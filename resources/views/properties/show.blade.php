@@ -147,6 +147,23 @@
                             </label>
                             <p class="text-gray-900">{{ $property->description ?? 'Không có mô tả' }}</p>
                         </div>
+
+                        <!-- Amenities -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                <i class="fas fa-check-circle mr-1 text-blue-600"></i>
+                                Tiện nghi
+                            </label>
+                            @if ($property->amenities->isNotEmpty())
+                                <ul class="list-disc list-inside text-gray-900">
+                                    @foreach ($property->amenities as $amenity)
+                                        <li>{{ $amenity->name }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-gray-900">Không có tiện nghi</p>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Actions -->

@@ -28,6 +28,11 @@ class Property extends Model
         return $this->belongsTo(Location::class);
     }
 
+    public function amenities()
+    {
+        return $this->belongsToMany(Amenity::class, 'property_amenities');
+    }
+
     public function scopeFilter($query, $filters)
     {
         if (isset($filters['landlord_id'])) {

@@ -111,7 +111,7 @@
                                 Loại bất động sản <span class="text-red-500">*</span>
                             </label>
                             <select id="type" name="type" required
-                                class="block w-full px-3(py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('type') border-red-500 @enderror">
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('type') border-red-500 @enderror">
                                 <option value="">Chọn loại bất động sản</option>
                                 <option value="single_room" {{ old('type') == 'single_room' ? 'selected' : '' }}>Phòng
                                     đơn</option>
@@ -169,80 +169,108 @@
                             <p class="mt-1 text-sm text-gray-500">
                                 <i class="fas fa-info mr-1"></i>
                                 Nhập diện tích (m²)
-                                </p施 </div>
+                            </p>
+                        </div>
 
-                                <!-- Max Occupants -->
-                            <div>
-                                <label for="max_occupants" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-users mr-1 text-blue-600"></i>
-                                    Số người tối đa <span class="text-red-500">*</span>
-                                </label>
-                                <input type="number" id="max_occupants" name="max_occupants"
-                                    value="{{ old('max_occupants') }}" required min="1"
-                                    placeholder="Nhập số người tối đa..."
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('max_occupants') border-red-500 @enderror">
-                                @error('max_occupants')
-                                    <p class="mt-1 text-sm text-red-600">
-                                        <i class="fas fa-exclamation-circle mr-1"></i>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
+                        <!-- Max Occupants -->
+                        <div>
+                            <label for="max_occupants" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-users mr-1 text-blue-600"></i>
+                                Số người tối đa <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="max_occupants" name="max_occupants"
+                                value="{{ old('max_occupants') }}" required min="1"
+                                placeholder="Nhập số người tối đa..."
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('max_occupants') border-red-500 @enderror">
+                            @error('max_occupants')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-                            <!-- Status -->
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-info mr-1 text-green-600"></i>
-                                    Trạng thái <span class="text-red-500">*</span>
-                                </label>
-                                <select id="status" name="status" required
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('status') border-red-500 @enderror">
-                                    <option value="">Chọn trạng thái</option>
-                                    <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>Sẵn
-                                        sàng</option>
-                                    <option value="rented" {{ old('status') == 'rented' ? 'selected' : '' }}>Đã thuê
-                                    </option>
-                                    <option value="maintenance"
-                                        {{ old('status') == 'maintenance' ? 'selected' : '' }}>Bảo trì</option>
-                                </select>
-                                @error('status')
-                                    <p class="mt-1 text-sm text-red-600">
-                                        <i class="fas fa-exclamation-circle mr-1"></i>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
+                        <!-- Status -->
+                        <div>
+                            <label for="status"
+                                class="block text-sm font-medium text Suffixed with * to indicate required field-gray-700 mb-2">
+                                <i class="fas fa-info mr-1 text-green-600"></i>
+                                Trạng thái <span class="text-red-500">*</span>
+                            </label>
+                            <select id="status" name="status" required
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('status') border-red-500 @enderror">
+                                <option value="">Chọn trạng thái</option>
+                                <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>Sẵn
+                                    sàng</option>
+                                <option value="rented" {{ old('status') == 'rented' ? 'selected' : '' }}>Đã thuê
+                                </option>
+                                <option value="maintenance" {{ old('status') == 'maintenance' ? 'selected' : '' }}>Bảo
+                                    trì</option>
+                            </select>
+                            @error('status')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-                            <!-- Description -->
-                            <div>
-                                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="fas fa-comment mr-1 text-purple-600"></i>
-                                    Mô tả
-                                </label>
-                                <textarea id="description" name="description" rows="4"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('description') border-red-500 @enderror"
-                                    placeholder="Nhập mô tả về bất động sản...">{{ old('description') }}</textarea>
-                                @error('description')
-                                    <p class="mt-1 text-sm text-red-600">
-                                        <i class="fas fa-exclamation-circle mr-1"></i>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-comment mr-1 text-purple-600"></i>
+                                Mô tả
+                            </label>
+                            <textarea id="description" name="description" rows="4"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('description') border-red-500 @enderror"
+                                placeholder="Nhập mô tả về bất động sản...">{{ old('description') }}</textarea>
+                            @error('description')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
 
-                            <!-- Form Actions -->
-                            <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-                                <a href="{{ route('properties.index') }}"
-                                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200 flex items-center">
-                                    <i class="fas fa-times mr-2"></i>
-                                    Hủy bỏ
-                                </a>
-                                <button type="submit"
-                                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200 flex items-center">
-                                    <i class="fas fa-save mr-2"></i>
-                                    Lưu bất động sản
-                                </button>
+                        <!-- Amenities -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-check-circle mr-1 text-blue-600"></i>
+                                Tiện nghi
+                            </label>
+                            <div class="grid grid-cols-2 gap-4">
+                                @foreach ($amenities as $amenity)
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="amenity_{{ $amenity->id }}" name="amenities[]"
+                                            value="{{ $amenity->id }}"
+                                            {{ in_array($amenity->id, old('amenities', [])) ? 'checked' : '' }}
+                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <label for="amenity_{{ $amenity->id }}"
+                                            class="ml-2 text-sm text-gray-700">{{ $amenity->name }}</label>
+                                    </div>
+                                @endforeach
                             </div>
+                            @error('amenities')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
+                            <a href="{{ route('properties.index') }}"
+                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-times mr-2"></i>
+                                Hủy bỏ
+                            </a>
+                            <button type="submit"
+                                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200 flex items-center">
+                                <i class="fas fa-save mr-2"></i>
+                                Lưu bất động sản
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use App\Http\Controllers\Controller;
+use App\Models\Amenity;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PropertyController extends Controller
 {
@@ -34,7 +34,9 @@ class PropertyController extends Controller
     {
         $landlords = User::all();
         $locations = Location::all();
-        return view('properties.create', compact('landlords', 'locations'));
+        $amenities = Amenity::all();
+
+        return view('properties.create', compact('landlords', 'locations', 'amenities'));
     }
 
     /**
@@ -52,9 +54,15 @@ class PropertyController extends Controller
             'max_occupants' => 'required|integer|min:1',
             'status' => 'required|in:available,rented,maintenance',
             'description' => 'nullable|string',
+            'amenities' => 'array',
+            'amenities.*' => 'exists:amenities,id',
         ]);
 
         $property = Property::create($validated);
+
+        if (isset($validated['amenities'])) {
+            $property->amenities()->sync($validated['amenities']);
+        }
 
         return redirect()->route('properties.show', $property)->with('success', 'Property created successfully.');
     }
@@ -74,7 +82,9 @@ class PropertyController extends Controller
     {
         $landlords = User::all();
         $locations = Location::all();
-        return view('properties.edit', compact('property', 'landlords', 'locations'));
+        $amenities = Amenity::all();
+
+        return view('properties.edit', compact('property', 'landlords', 'locations', 'amenities'));
     }
 
     /**
@@ -92,9 +102,17 @@ class PropertyController extends Controller
             'max_occupants' => 'required|integer|min:1',
             'status' => 'required|in:available,rented,maintenance',
             'description' => 'nullable|string',
+            'amenities' => 'array',
+            'amenities.*' => 'exists:amenities,id',
         ]);
 
         $property->update($validated);
+
+        if (isset($validated['amenities'])) {
+            $property->amenities()->sync($validated['amenities']);
+        } else {
+            $property->amenities()->detach();
+        }
 
         return redirect()->route('properties.show', $property)->with('success', 'Property updated successfully.');
     }
