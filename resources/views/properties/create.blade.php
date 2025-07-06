@@ -19,7 +19,8 @@
             <!-- Form Card -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('properties.store') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('properties.store') }}" class="space-y-6"
+                        enctype="multipart/form-data">
                         @csrf
 
                         <!-- Form Header -->
@@ -192,8 +193,7 @@
 
                         <!-- Status -->
                         <div>
-                            <label for="status"
-                                class="block text-sm font-medium text Suffixed with * to indicate required field-gray-700 mb-2">
+                            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-info mr-1 text-green-600"></i>
                                 Trạng thái <span class="text-red-500">*</span>
                             </label>
@@ -256,6 +256,27 @@
                                     {{ $message }}
                                 </p>
                             @enderror
+                        </div>
+
+                        <!-- Images -->
+                        <div>
+                            <label for="images" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-image mr-1 text-yellow-600"></i>
+                                Hình ảnh
+                            </label>
+                            <input type="file" id="images" name="images[]" multiple
+                                accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('images.*') border-red-500 @enderror">
+                            @error('images.*')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                            <p class="mt-1 text-sm text-gray-500">
+                                <i class="fas fa-info mr-1"></i>
+                                Tải lên nhiều hình ảnh (JPEG, PNG, JPG, GIF, SVG; tối đa 2MB mỗi ảnh)
+                            </p>
                         </div>
 
                         <!-- Form Actions -->
@@ -329,6 +350,7 @@
                 const locationSelect = document.getElementById('location_id');
                 const addressInput = document.getElementById('address_detail');
                 const typeSelect = document.getElementById('type');
+                const imagesInput = document.getElementById('images');
 
                 // Auto-focus next field
                 landlordSelect.addEventListener('change', function() {
@@ -365,6 +387,36 @@
                     } else {
                         counterElement.className = 'mt-1 text-sm text-gray-500';
                     }
+                });
+
+                // Image input validation feedback
+                imagesInput.addEventListener('change', function() {
+                    const files = this.files;
+                    let errorMessage = '';
+                    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+
+                    for (let i = 0; i < files.length; i++) {
+                        if (!allowedTypes.includes(files[i].type)) {
+                            errorMessage = 'Vui lòng chỉ tải lên các tệp JPEG, PNG, JPG, GIF hoặc SVG.';
+                            break;
+                        }
+                        if (files[i].size > maxSize) {
+                            errorMessage = `Tệp ${files[i].name} vượt quá giới hạn 2MB.`;
+                            break;
+                        }
+                    }
+
+                    let errorElement = document.getElementById('images-error');
+                    if (!errorElement) {
+                        errorElement = document.createElement('p');
+                        errorElement.id = 'images-error';
+                        errorElement.className = 'mt-1 text-sm text-red-600';
+                        imagesInput.parentNode.appendChild(errorElement);
+                    }
+
+                    errorElement.innerHTML = errorMessage ?
+                        `<i class="fas fa-exclamation-circle mr-1"></i>${errorMessage}` : '';
                 });
             });
         </script>

@@ -74,7 +74,8 @@
             <!-- Form Card -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('properties.update', $property->id) }}" class="space-y-6">
+                    <form method="POST" action="{{ route('properties.update', $property->id) }}" class="space-y-6"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -186,7 +187,7 @@
                             </select>
                             @error('type')
                                 <p class="mt-1 text-sm text-red-600">
-                                    <i class="fas fa-exclamation-circleOPSIS mr-1"></i>
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
                                     {{ $message }}
                                 </p>
                             @enderror
@@ -326,6 +327,56 @@
                             @enderror
                         </div>
 
+                        <!-- Existing Images -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-image mr-1 text-purple-600"></i>
+                                Hình ảnh hiện tại
+                            </label>
+                            <div class="grid grid-cols-2 gap-4">
+                                @foreach ($property->images as $image)
+                                    <div class="relative">
+                                        <img src="{{ $image->image_full_url }}" alt="Property Image"
+                                            class="w-full h-32 object-cover rounded-md">
+                                        <input type="checkbox" id="image_delete_{{ $image->id }}"
+                                            name="images_to_delete[]" value="{{ $image->id }}"
+                                            class="absolute top-2 right-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                        <label for="image_delete_{{ $image->id }}"
+                                            class="absolute top-2 right-6 text-sm text-red-600">
+                                            <i class="fas fa-trash"></i>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            @error('images_to_delete')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <!-- Upload New Images -->
+                        <div>
+                            <label for="images" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-upload mr-1 text-blue-600"></i>
+                                Tải lên hình ảnh mới
+                            </label>
+                            <input type="file" id="images" name="images[]" multiple
+                                accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 @error('images.*') border-red-500 @enderror">
+                            @error('images.*')
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                            <p class="mt-1 text-sm text-gray-500">
+                                <i class="fas fa-info mr-1"></i>
+                                Chấp nhận các định dạng: JPEG, PNG, JPG, GIF, SVG. Kích thước tối đa: 2MB mỗi hình.
+                            </p>
+                        </div>
+
                         <!-- Form Actions -->
                         <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
                             <a href="{{ route('properties.index') }}"
@@ -424,7 +475,8 @@
                 max_occupants: '{{ $property->max_occupants }}',
                 status: '{{ $property->status }}',
                 description: '{{ $property->description }}',
-                amenities: @json($property->amenities->pluck('id')->toArray())
+                amenities: @json($property->amenities->pluck('id')->toArray()),
+                images_to_delete: []
             };
 
             // Form utilities
@@ -439,10 +491,16 @@
                     document.getElementById('max_occupants').value = originalValues.max_occupants;
                     document.getElementById('status').value = originalValues.status;
                     document.getElementById('description').value = originalValues.description || '';
+                    document.getElementById('images').value = '';
 
                     // Reset amenities checkboxes
                     document.querySelectorAll('input[name="amenities[]"]').forEach(checkbox => {
                         checkbox.checked = originalValues.amenities.includes(parseInt(checkbox.value));
+                    });
+
+                    // Reset image deletion checkboxes
+                    document.querySelectorAll('input[name="images_to_delete[]"]').forEach(checkbox => {
+                        checkbox.checked = false;
                     });
                 }
             }

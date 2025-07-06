@@ -33,6 +33,11 @@ class Property extends Model
         return $this->belongsToMany(Amenity::class, 'property_amenities');
     }
 
+    public function images()
+    {
+        return $this->hasMany(PropertyImage::class);
+    }
+
     public function scopeFilter($query, $filters)
     {
         if (isset($filters['landlord_id'])) {

@@ -56,12 +56,21 @@ class PropertyController extends Controller
             'description' => 'nullable|string',
             'amenities' => 'array',
             'amenities.*' => 'exists:amenities,id',
+            'images' => 'array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $property = Property::create($validated);
 
         if (isset($validated['amenities'])) {
             $property->amenities()->sync($validated['amenities']);
+        }
+
+        if (isset($validated['images'])) {
+            foreach ($validated['images'] as $image) {
+                $imagePath = $image->store('property_images', 'public');
+                $property->images()->create(['image_url' => $imagePath]);
+            }
         }
 
         return redirect()->route('properties.show', $property)->with('success', 'Property created successfully.');
@@ -104,6 +113,10 @@ class PropertyController extends Controller
             'description' => 'nullable|string',
             'amenities' => 'array',
             'amenities.*' => 'exists:amenities,id',
+            'images' => 'array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images_to_delete' => 'array',
+            'images_to_delete.*' => 'exists:property_images,id',
         ]);
 
         $property->update($validated);
@@ -112,6 +125,25 @@ class PropertyController extends Controller
             $property->amenities()->sync($validated['amenities']);
         } else {
             $property->amenities()->detach();
+        }
+
+        if (isset($validated['images_to_delete'])) {
+            foreach ($validated['images_to_delete'] as $imageId) {
+                $image = $property->images()->find($imageId);
+                if ($image) {
+                    if (file_exists(public_path('storage/' . $image->image_url))) {
+                        unlink(public_path('storage/' . $image->image_url));
+                    }
+                    $image->delete();
+                }
+            }
+        }
+
+        if (isset($validated['images'])) {
+            foreach ($validated['images'] as $image) {
+                $imagePath = $image->store('property_images', 'public');
+                $property->images()->create(['image_url' => $imagePath]);
+            }
         }
 
         return redirect()->route('properties.show', $property)->with('success', 'Property updated successfully.');
@@ -123,6 +155,15 @@ class PropertyController extends Controller
     public function destroy(Property $property)
     {
         try {
+            if ($property->images) {
+                foreach ($property->images as $image) {
+                    if (file_exists(public_path('storage/' . $image->image_url))) {
+                        unlink(public_path('storage/' . $image->image_url));
+                    }
+                    $image->delete();
+                }
+            }
+
             $property->delete();
             return redirect()->route('properties.index')->with('success', 'Property deleted successfully.');
         } catch (\Exception $e) {

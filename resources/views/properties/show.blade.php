@@ -30,6 +30,30 @@
                         </p>
                     </div>
 
+                    <!-- Property Images -->
+                    @if ($property->images->isNotEmpty())
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-image mr-1 text-purple-600"></i>
+                                Hình ảnh
+                            </label>
+                            <div class="grid grid-cols-2 gap-4">
+                                @foreach ($property->images as $image)
+                                    <img src="{{ $image->image_full_url }}" alt="Property Image"
+                                        class="w-full h-48 object-cover rounded-md">
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-image mr-1 text-purple-600"></i>
+                                Hình ảnh
+                            </label>
+                            <p class="text-gray-900">Không có hình ảnh</p>
+                        </div>
+                    @endif
+
                     <!-- Property Details -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Landlord -->
