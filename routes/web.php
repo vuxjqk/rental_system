@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AmenityController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
@@ -22,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('locations', LocationController::class);
     Route::resource('amenities', AmenityController::class);
     Route::resource('properties', PropertyController::class);
+    Route::resource('contracts', ContractController::class);
 });
 
 require __DIR__ . '/auth.php';
