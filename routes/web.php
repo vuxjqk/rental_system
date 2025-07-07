@@ -5,6 +5,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\Tenant\PropertyController as TenantPropertyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,5 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('properties', PropertyController::class);
     Route::resource('contracts', ContractController::class);
 });
+
+Route::prefix('tenant')->name('tenant.')->group(function () {
+    Route::resource('properties', TenantPropertyController::class);
+});
+
 
 require __DIR__ . '/auth.php';

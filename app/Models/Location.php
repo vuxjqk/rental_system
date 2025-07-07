@@ -12,4 +12,9 @@ class Location extends Model
     {
         return $this->belongsTo(Location::class, 'parent_id');
     }
+
+    public function children()
+    {
+        return $this->hasMany(Location::class, 'parent_id');
+    }
 }
