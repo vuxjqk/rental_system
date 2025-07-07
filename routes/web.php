@@ -17,14 +17,20 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::prefix('landlord')->middleware('role:landlord')->group(function () {});
+
+    Route::prefix('tenant')->middleware('role:landlord')->group(function () {});
+
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::resource('locations', LocationController::class);
+        Route::resource('amenities', AmenityController::class);
+        Route::resource('properties', PropertyController::class);
+        Route::resource('contracts', ContractController::class);
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::resource('locations', LocationController::class);
-    Route::resource('amenities', AmenityController::class);
-    Route::resource('properties', PropertyController::class);
-    Route::resource('contracts', ContractController::class);
 });
 
 Route::prefix('tenant')->name('tenant.')->group(function () {
