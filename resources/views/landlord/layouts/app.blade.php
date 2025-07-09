@@ -23,7 +23,7 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-        @include('layouts.navigation')
+        @include('landlord.layouts.navigation')
 
         <!-- Page Heading -->
         @isset($header)
@@ -39,8 +39,6 @@
             {{ $slot }}
         </main>
     </div>
-
-    @stack('scripts')
 </body>
 
 </html>

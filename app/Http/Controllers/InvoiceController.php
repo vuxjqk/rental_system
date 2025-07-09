@@ -5,17 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use App\Http\Controllers\Controller;
 use App\Models\Contract;
+use App\Models\User;
 use Illuminate\Http\Request;
-use User;
 
 class InvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $landlords = User::where('role', 'landlord')->get();
+        $tenants = User::where('role', 'tenant')->get();
+
+        $invoices = Invoice::query()
+            ->with('landlord', 'tenant')
+            ->filter($request->only(['landlord_id', 'tenant_id', 'status']))
+            ->paginate(10);
+
+        return view('invoices.index', compact('invoices', 'landlords', 'tenants'));
     }
 
     /**
@@ -24,7 +32,7 @@ class InvoiceController extends Controller
     public function create()
     {
         $contracts = Contract::all();
-        $tenants = User::all();
+        $tenants = User::where('role', 'tenant')->get();
 
         return view('invoices.create', compact('contracts', 'tenants'));
     }
@@ -75,7 +83,7 @@ class InvoiceController extends Controller
     public function edit(Invoice $invoice)
     {
         $contracts = Contract::all();
-        $tenants = User::all();
+        $tenants = User::where('role', 'tenant')->get();
 
         return view('invoices.edit', compact('invoice', 'contracts', 'tenants'));
     }

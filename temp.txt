@@ -1,3 +1,5 @@
 php artisan make:model _ -mcr
+php artisan make:controller _Controller --resource
 php artisan migrate
 php artisan migrate:fresh --seed
+php artisan make:factory _Factory --model=_

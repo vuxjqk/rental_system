@@ -16,8 +16,8 @@ class ContractController extends Controller
      */
     public function index(Request $request)
     {
-        $tenants = User::all();
-        $landlords = User::all();
+        $tenants = User::where('role', 'tenant')->get();
+        $landlords = User::where('role', 'landlord')->get();
 
         $contract = Contract::query()
             ->with('tenant', 'landlord')
@@ -32,9 +32,9 @@ class ContractController extends Controller
      */
     public function create()
     {
-        $properties = Property::all();
-        $tenants = User::all();
-        $landlords = User::all();
+        $properties = Property::where('status', 'available')->get();
+        $tenants = User::where('role', 'tenant')->get();
+        $landlords = User::where('role', 'landlord')->get();
 
         return view('contracts.create', compact('properties', 'tenants', 'landlords'));
     }
@@ -62,6 +62,11 @@ class ContractController extends Controller
 
         $contract = Contract::create($validated);
 
+        $property = Property::find($validated['property_id']);
+        $property->update([
+            'status' => 'rented',
+        ]);
+
         return redirect()->route('contracts.show', $contract)->with('success', 'Contract created successfully.');
     }
 
@@ -79,8 +84,8 @@ class ContractController extends Controller
     public function edit(Contract $contract)
     {
         $properties = Property::all();
-        $tenants = User::all();
-        $landlords = User::all();
+        $tenants = User::where('role', 'tenant')->get();
+        $landlords = User::where('role', 'landlord')->get();
 
         return view('contracts.edit', compact('contract', 'properties', 'tenants', 'landlords'));
     }
@@ -119,6 +124,16 @@ class ContractController extends Controller
 
         $contract->update($validated);
 
+        $property = Property::find($validated['property_id']);
+        if ($validated['status'] === 'terminated' || $validated['status'] === 'expired') {
+            $status = 'available';
+        } else {
+            $status = 'rented';
+        }
+        $property->update([
+            'status' => $status,
+        ]);
+
         return redirect()->route('contracts.show', $contract)->with('success', 'Contract updated successfully.');
     }
 
@@ -131,6 +146,11 @@ class ContractController extends Controller
             if ($contract->contract_file_url) {
                 Storage::disk('public')->delete($contract->contract_file_url);
             }
+
+            $property = Property::find($contract->property_id);
+            $property->update([
+                'status' => 'available',
+            ]);
 
             $contract->delete();
             return redirect()->route('contracts.index')->with('success', 'Contract deleted successfully.');

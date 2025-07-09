@@ -14,27 +14,10 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
-                    </x-nav-link>
 
-                    <x-nav-link :href="route('locations.index')" :active="request()->routeIs('locations.*')">
-                        {{ __('Location') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('amenities.index')" :active="request()->routeIs('amenities.*')">
-                        {{ __('Amenity') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('properties.index')" :active="request()->routeIs('properties.*')">
-                        {{ __('Property') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('contracts.index')" :active="request()->routeIs('contracts.*')">
-                        {{ __('Contract') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
-                        {{ __('Invoice') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('landlord.properties.index')" :active="request()->routeIs('landlord.properties.*')">
+                            {{ __('Property') }}
+                        </x-nav-link>
                 </div>
             </div>
 

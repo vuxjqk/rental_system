@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\Landlord\PropertyController as LandlordPropertyController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
@@ -17,7 +19,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::prefix('landlord')->middleware('role:landlord')->group(function () {});
+    Route::prefix('landlord')->middleware('role:landlord')->name('landlord.')->group(function () {
+        Route::resource('properties', LandlordPropertyController::class);
+    });
 
     Route::prefix('tenant')->middleware('role:landlord')->group(function () {});
 
@@ -26,6 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('amenities', AmenityController::class);
         Route::resource('properties', PropertyController::class);
         Route::resource('contracts', ContractController::class);
+        Route::resource('invoices', InvoiceController::class);
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

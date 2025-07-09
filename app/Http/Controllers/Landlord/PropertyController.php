@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Landlord;
 
 use App\Models\Property;
 use App\Http\Controllers\Controller;
@@ -8,6 +8,7 @@ use App\Models\Amenity;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PropertyController extends Controller
 {
@@ -16,7 +17,7 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
-        $landlords = User::where('role', 'landlord')->get();
+        $landlords = User::all();
         $locations = Location::all();
 
         $properties = Property::query()
@@ -24,7 +25,7 @@ class PropertyController extends Controller
             ->filter($request->only(['landlord_id', 'location_id', 'status']))
             ->paginate(10);
 
-        return view('properties.index', compact('properties', 'landlords', 'locations'));
+        return view('landlord.properties.index', compact('properties', 'landlords', 'locations'));
     }
 
     /**
@@ -32,11 +33,10 @@ class PropertyController extends Controller
      */
     public function create()
     {
-        $landlords = User::where('role', 'landlord')->get();
         $locations = Location::all();
         $amenities = Amenity::all();
 
-        return view('properties.create', compact('landlords', 'locations', 'amenities'));
+        return view('landlord.properties.create', compact('locations', 'amenities'));
     }
 
     /**
@@ -45,20 +45,20 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'landlord_id' => 'required|exists:users,id',
             'location_id' => 'required|exists:locations,id',
             'address_detail' => 'required|string',
             'type' => 'required|in:single_room,shared_room,apartment,whole_house',
             'price' => 'required|numeric|min:0',
             'area' => 'required|numeric|min:0',
             'max_occupants' => 'required|integer|min:1',
-            'status' => 'required|in:available,rented,maintenance',
             'description' => 'nullable|string',
             'amenities' => 'array',
             'amenities.*' => 'exists:amenities,id',
             'images' => 'array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        $validated['landlord_id'] = Auth::id();
 
         $property = Property::create($validated);
 
@@ -73,7 +73,7 @@ class PropertyController extends Controller
             }
         }
 
-        return redirect()->route('properties.show', $property)->with('success', 'Property created successfully.');
+        return redirect()->route('landlord.properties.show', $property)->with('success', 'Property created successfully.');
     }
 
     /**
@@ -81,7 +81,7 @@ class PropertyController extends Controller
      */
     public function show(Property $property)
     {
-        return view('properties.show', compact('property'));
+        return view('landlord.properties.show', compact('property'));
     }
 
     /**
@@ -89,11 +89,10 @@ class PropertyController extends Controller
      */
     public function edit(Property $property)
     {
-        $landlords = User::where('role', 'landlord')->get();
         $locations = Location::all();
         $amenities = Amenity::all();
 
-        return view('properties.edit', compact('property', 'landlords', 'locations', 'amenities'));
+        return view('landlord.properties.edit', compact('property', 'locations', 'amenities'));
     }
 
     /**
@@ -115,9 +114,9 @@ class PropertyController extends Controller
             'amenities.*' => 'exists:amenities,id',
             'images' => 'array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'images_to_delete' => 'array',
-            'images_to_delete.*' => 'exists:property_images,id',
         ]);
+
+        $validated['landlord_id'] = Auth::id();
 
         $property->update($validated);
 
@@ -146,7 +145,7 @@ class PropertyController extends Controller
             }
         }
 
-        return redirect()->route('properties.show', $property)->with('success', 'Property updated successfully.');
+        return redirect()->route('landlord.properties.show', $property)->with('success', 'Property updated successfully.');
     }
 
     /**
@@ -165,9 +164,9 @@ class PropertyController extends Controller
             }
 
             $property->delete();
-            return redirect()->route('properties.index')->with('success', 'Property deleted successfully.');
+            return redirect()->route('landlord.properties.index')->with('success', 'Property deleted successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('properties.index')->with('error', 'Failed to delete property: ' . $e->getMessage());
+            return redirect()->route('landlord.properties.index')->with('error', 'Failed to delete property: ' . $e->getMessage());
         }
     }
 }
