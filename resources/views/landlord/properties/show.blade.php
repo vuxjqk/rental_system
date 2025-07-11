@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-landlord.app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center">
@@ -235,4 +235,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-landlord.app-layout>

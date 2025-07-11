@@ -26,6 +26,8 @@ class User extends Authenticatable
         'id_card',
         'address',
         'is_active',
+        'provider',
+        'provider_id',
     ];
 
     /**
